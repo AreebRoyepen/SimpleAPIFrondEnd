@@ -1,6 +1,8 @@
 import React, { Component } from 'react';  
-import { Button, Card, CardFooter, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, FormGroup } from 'reactstrap';  
-  
+import { Button, Card, CardBody, Col, Container, Input, Row, FormGroup } from 'reactstrap';  
+import { updatePerson } from "../redux/actionCreator/personActions";
+import { connect } from 'react-redux';
+
 class EditPerson extends Component {  
 
     state = {  
@@ -45,8 +47,17 @@ class EditPerson extends Component {
   }  
 
   register() {  
-  
-  fetch('http://localhost:8080/personbyname/' + this.state.name)
+  console.log(this.state.name);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", localStorage.getItem("token"));
+    myHeaders.append("Content-Type", "application/json");
+
+    var options = {
+      method: "GET",
+      headers: myHeaders
+    };
+
+  fetch('/personbyname/' + this.state.name, options)
     .then((response) => response.json())  
     .then((json) => this.setState({person: json, loading: false}) )
     .catch(error => console.log(error));
@@ -54,20 +65,25 @@ class EditPerson extends Component {
   
   register2() {  
 
-    var formData = new FormData();
-    if(this.state.name != "")
-    formData.append("name", this.state.name);
+    var data = {};
 
+    if(this.state.name != "")
+      data["name"] =this.state.name;
     if(this.state.surname != "")
-    formData.append("surname", this.state.surname);
+      data["surname"] =this.state.surname;
     if(this.state.gender != "")
-    formData.append("gender", this.state.gender);
+      data["gender"] =this.state.gender;
     if(this.state.email != "")
-    formData.append("email", this.state.email);
+      data["email"] =this.state.email;
+
+    console.log(JSON.stringify(data));
   
-    fetch('http://localhost:8080/person/' + this.state.person[0].id, {method : "PUT" , body : formData})
-      .then((response) => response.json())  
-      .then((json) => {console.log(json)} ) ;
+    // fetch('http://localhost:8080/person/' + this.state.person[0].id, {method : "PUT" , body : formData})
+    //   .then((response) => response.json())  
+    //   .then((json) => {console.log(json)} ) ;
+
+
+    this.props.editPerson(JSON.stringify(person));
   }
   
   enable(){
@@ -153,4 +169,13 @@ class EditPerson extends Component {
   }  
 }  
   
-export default EditPerson; 
+
+
+const mapDispatchToProps = dispatch => {
+  return {
+    edit: person => dispatch(updatePerson(person))
+  }
+}
+  
+export default connect(null, mapDispatchToProps)(EditPerson);
+//export default EditPerson; 

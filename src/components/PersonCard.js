@@ -3,24 +3,30 @@ import { Card, CardHeader, CardBody, CardFooter } from 'react-simple-card';
 
 
 class PersonCard extends Component {
-
-
   
   state = {
     person: [],
     isLoading: false
   };
 
-
-
   componentDidMount(){
 
     this.setState({isLoading: true});
-    fetch('http://localhost:8080/person')
-    //fetch('https://official-joke-api.appspot.com/random_joke')
-      // We get the API response and receive data in JSON format...
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", localStorage.getItem("token") );
+    myHeaders.append("Content-Type", "application/json");
+
+    var options = {
+      method: "GET",
+      headers: myHeaders
+    };
+
+    fetch("/person", options)
       .then(response => response.json())
-      .then( json => { this.setState({person: json, isLoading: false}) } );
+      .then(json => {
+        this.setState({ person: json, isLoading: false });
+      }).catch(error => console.log('error', error));
 
   }
 
@@ -41,7 +47,7 @@ class PersonCard extends Component {
           
               
             <div>
-              {  person.map(item => (
+              {  person.map( item => (
                 
                 <Card>
               <CardHeader >{item.name}, {item.surname}</CardHeader>

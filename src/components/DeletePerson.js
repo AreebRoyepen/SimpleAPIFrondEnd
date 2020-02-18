@@ -1,6 +1,7 @@
 import React, { Component } from 'react'; 
-import { Button, Card, CardFooter, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, FormGroup } from 'reactstrap';  
-  
+import { connect } from "react-redux";
+import { deletePerson } from "../redux/actionCreator/personActions";
+
 class DeletePerson extends Component {  
 
   state = {  
@@ -23,10 +24,12 @@ class DeletePerson extends Component {
   register() {  
   
       console.log(this.state.id);
-    fetch('http://localhost:8080/person/' + this.state.id, {method : "DELETE"})
-      .then((response) => response.json())  
-      .then((json) => this.setState({person: json, loading: false} , console.log(json)) )
-      .catch(error => console.log(error));
+    // fetch('http://localhost:8080/person/' + this.state.id, {method : "DELETE"})
+    //   .then((response) => response.json())  
+    //   .then((json) => this.setState({person: json, loading: false} , console.log(json)) )
+    //   .catch(error => console.log(error));
+
+      this.props.deletePerson(this.state.id);
   }  
 
 
@@ -53,5 +56,13 @@ class DeletePerson extends Component {
     );  
   }  
 }  
+
+const mapDispatchToProps = dispatch => {
+
+  return {
+    deletePerson : person => dispatch(deletePerson)
+  }
+
+}
   
-export default DeletePerson; 
+export default connect(null, mapDispatchToProps)(DeletePerson); 

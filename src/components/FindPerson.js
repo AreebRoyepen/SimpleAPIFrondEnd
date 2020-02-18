@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; 
-import { Button, Card, CardFooter, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, FormGroup } from 'reactstrap';  
+import {  Card,  CardBody, Col, Container, Input, Row, FormGroup } from 'reactstrap';  
   
 class FindPerson extends Component {  
 

@@ -12,7 +12,7 @@ const Header = ({children}) => {
     return (
         <div>
             <div>
-                <h3 style = {style} > <Link to = '/'>Home</Link></h3>
+                <h3 style = {style} > <Link to = '/'>Home/Log in</Link></h3>
                 <h3 style = {style}> <Link to = '/personCard'>Get Person</Link></h3>
                 <h3 style = {style}> <Link to = '/findPerson'>Find Person</Link></h3>
                 <h3 style = {style}> <Link to = '/deletePerson'>Delete Person</Link></h3>
