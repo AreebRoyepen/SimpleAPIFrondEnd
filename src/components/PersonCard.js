@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { connect } from "react-redux";
 import {Card,  CardBody, CardHeader, CardFooter} from 'reactstrap';  
 import { allPerson } from "../redux/actionCreator/personActions";
-import {personCard, isLoadingCard} from "../redux/reducers/personReducer";
 
 
 class PersonCard extends Component {
@@ -57,10 +56,12 @@ class PersonCard extends Component {
               {  persons.map( item => (
                 
                 <Card>
-              <CardHeader>{item.name}, {item.surname}</CardHeader>
+              <CardHeader> <h3>Name: {item.name}, Surname: {item.surname}</h3></CardHeader>
               <CardBody>I am {item.gender}</CardBody>
-              <CardFooter>{item.email}</CardFooter> 
+              <CardFooter> <h3> email address: {item.email} </h3> </CardFooter> 
+              <br></br>
               </Card>
+              
             ))
             }
             </div>
@@ -81,7 +82,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    person: person => dispatch(personCard(person)),
     allPerson: () => dispatch(allPerson())
   }
 }

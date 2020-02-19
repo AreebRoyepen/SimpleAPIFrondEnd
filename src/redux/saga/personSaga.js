@@ -1,7 +1,8 @@
 import { put, takeEvery,take, call } from "redux-saga/effects";
 import { ADD_PERSON_REQUEST, ADD_PERSON_SUCCESS, UPDATE_PERSON_SUCCESS, 
    FIND_PERSON_SUCCESS, DELETE_PERSON_SUCCESS, UPDATE_PERSON_REQUEST, 
-   DELETE_PERSON_REQUEST, FIND_PERSON_REQUEST, ALL_PERSON_REQUEST, ALL_PERSON_SUCCESS } from "../constants";
+   DELETE_PERSON_REQUEST, FIND_PERSON_REQUEST, ALL_PERSON_REQUEST, 
+   ALL_PERSON_SUCCESS,FIND_PERSON_BY_NAME_REQUEST, FIND_PERSON_BY_NAME_SUCCESS } from "../constants";
 
 function* add(options){
 
@@ -134,11 +135,39 @@ function* allPersonSaga(){
            });
 }
 
+
+function* findPersonByNameSaga(action){
+
+   var myHeaders = new Headers();
+   myHeaders.append("Authorization", localStorage.getItem("token") );
+   myHeaders.append("Content-Type", "application/json");
+  
+   var options = {
+     method: "GET",
+     headers: myHeaders,
+   };
+
+   const data = yield fetch('/personbyname/' + action.payload, options)
+   .then(response => response.json())
+   .then(result => result)
+   .catch(error => console.log('error', error));
+
+   // const data = yield call(findByName, action.payload);   
+
+   yield put({
+      type: FIND_PERSON_BY_NAME_SUCCESS,
+      payload: data
+   });
+
+
+}
+
 export default function* personSaga(){    
    yield takeEvery(ADD_PERSON_REQUEST, addPersonSaga);
    yield takeEvery(UPDATE_PERSON_REQUEST, updatePersonSaga);
    yield takeEvery(DELETE_PERSON_REQUEST, deletePersonSaga );
    yield takeEvery(FIND_PERSON_REQUEST, getPersonSaga);
    yield takeEvery(ALL_PERSON_REQUEST, allPersonSaga);
+   yield takeEvery(FIND_PERSON_BY_NAME_REQUEST, findPersonByNameSaga);
 
 }

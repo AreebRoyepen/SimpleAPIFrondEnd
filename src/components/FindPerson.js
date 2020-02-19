@@ -1,7 +1,7 @@
 import React, { Component } from 'react'; 
 import { connect } from "react-redux";
 import { Button, Card,  CardBody,  Col, Container,  Input, Row, FormGroup } from 'reactstrap';  
-import { findPerson } from "../redux/actionCreator/personActions";
+import { findPersonByName, findP } from "../redux/actionCreator/personActions";
 
 class FindPerson extends Component {  
 
@@ -10,17 +10,13 @@ class FindPerson extends Component {
     person: {},
     loading: true
   }  
-  constructor() {  
-    super();  
 
-    this.name = this.name.bind(this);  
+  constructor(props) {  
+    super(props);  
+
     this.register = this.register.bind(this);
-    this.handleChange = this.handleChange.bind(this);
   }  
-  
-  name(event) {  
-    this.setState({ name: event.target.value })  
-  }  
+
   
   register() {  
   
@@ -33,13 +29,19 @@ class FindPerson extends Component {
     this.props.findPerson(this.state.name);
   }  
 
+  componentDidMount(){
+
+    this.props.findP();
+  }
 
 
-  handleChange(event){
-    this.setState({name: event.target.value});
+  handleChange = e => {
+    this.setState({[e.target.name]: e.target.value});
   }
   
   render() {    
+
+    const {person, isLoading} = this.props;
 
     return (  
       <div className="app flex-row align-items-center">  
@@ -50,59 +52,59 @@ class FindPerson extends Component {
           </div>  
 
 
-          {this.state.loading ?
+          {isLoading ?
           
-          <div>
-        
-          <input type="text" value={this.state.name} onChange={this.handleChange} />
+          <div>        
+          <input type="text" onChange = {this.handleChange} name="name" placeholder=" name" />
           <button onClick = {() => this.register()}> Search</button>
-
           </div>
 
           :
 
-
           <div>
-
           <Container>  
+
+          {  person.map( item => (
           <Row className="justify-content-center">  
             <Col md="9" lg="7" xl="6">  
               <Card className="mx-4">  
                 <CardBody className="p-4">  
                     <FormGroup disabled className="mb-3">  
-                    <Input type="text"  value={this.state.person[0].name} placeholder=" name" />  
-                    <Input type="text"  value={this.state.person[0].surname} placeholder=" surname" />  
+                    <Input type="text"  value={item.name} placeholder=" name" />  
+                    <Input type="text"  value={item.surname} placeholder=" surname" />  
 
-                      <Input type="text"  value={this.state.person[0].email} placeholder=" Email" />  
-                      <Input type="gender"  value={this.state.person[0].gender} placeholder=" gender" />  
+                      <Input type="text"  value={item.email} placeholder=" Email" />  
+                      <Input type="gender"  value={item.gender} placeholder=" gender" />  
                   </FormGroup>  
                 </CardBody>  
               </Card>  
             </Col>  
           </Row>  
+          ))}
         </Container>  
-
-          </div>
-
-        
-        
-        
-        
+          </div>        
         }
 
-            
-
-
-        
       </div>  
     );  
   }  
 }  
 
+const mapStateToProps = state => {
+  console.log(state.person.persons);
+  
+  return {
+    person: state.person.persons,
+    isLoading: state.person.isLoadingFind
+  }
+}
+
 const mapDispatchToProps = dispatch => {
   return {
-    findPerson : person => dispatch(findPerson(person))
+    findPerson : person => dispatch(findPersonByName(person)),
+    findP : () => dispatch(findP())
+
   }
 }
   
-export default connect(null,mapDispatchToProps)(FindPerson); 
+export default connect(mapStateToProps,mapDispatchToProps)(FindPerson); 

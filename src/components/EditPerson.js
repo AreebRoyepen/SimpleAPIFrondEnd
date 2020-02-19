@@ -1,6 +1,6 @@
 import React, { Component } from 'react';  
 import { Button, Card, CardBody, Col, Container, Input, Row, FormGroup } from 'reactstrap';  
-import { updatePerson, allPerson } from "../redux/actionCreator/personActions";
+import { updatePerson, allPerson, findPersonByName, findPersonByNameEdit } from "../redux/actionCreator/personActions";
 import { connect } from 'react-redux';
 
 class EditPerson extends Component {  
@@ -48,7 +48,7 @@ class EditPerson extends Component {
 
   register() {  
   console.log(this.state.name);
-  this.props.allPerson();
+  this.props.findPerson(this.state.name);
   //   var myHeaders = new Headers();
   //   myHeaders.append("Authorization", localStorage.getItem("token"));
   //   myHeaders.append("Content-Type", "application/json");
@@ -170,14 +170,22 @@ class EditPerson extends Component {
   }  
 }  
   
-
+const mapStateToProps = state => {
+  console.log(state.person.persons);
+  
+  return {
+    person: state.person.persons,
+    loading: state.person.isLoadingEdit,
+    edit: state.person.edit
+  }
+}
 
 const mapDispatchToProps = dispatch => {
   return {
     edit: person => dispatch(updatePerson(person)),
-    allPerson: () => dispatch(allPerson())
+    findPerson: person => dispatch(findPersonByNameEdit(person))
   }
 }
   
-export default connect(null, mapDispatchToProps)(EditPerson);
+export default connect(mapStateToProps, mapDispatchToProps)(EditPerson);
 //export default EditPerson; 
