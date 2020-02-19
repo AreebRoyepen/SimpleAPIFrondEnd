@@ -1,7 +1,7 @@
 import { put, takeEvery,take, call } from "redux-saga/effects";
 import { ADD_PERSON_REQUEST, ADD_PERSON_SUCCESS, UPDATE_PERSON_SUCCESS, 
    FIND_PERSON_SUCCESS, DELETE_PERSON_SUCCESS, UPDATE_PERSON_REQUEST, 
-   DELETE_PERSON_REQUEST, FIND_PERSON_REQUEST } from "../constants";
+   DELETE_PERSON_REQUEST, FIND_PERSON_REQUEST, ALL_PERSON_REQUEST, ALL_PERSON_SUCCESS } from "../constants";
 
 function* add(options){
 
@@ -26,13 +26,22 @@ function* addPersonSaga(action){
 
     yield put({
                 type: ADD_PERSON_SUCCESS,
-                data
+                payload: data
              });
 }
 
-function* get(options){
+function* get(id){
 
-   return fetch('/person', options)
+   var myHeaders = new Headers();
+   myHeaders.append("Authorization", localStorage.getItem("token") );
+   myHeaders.append("Content-Type", "application/json");
+  
+   var options = {
+     method: "GET",
+     headers: myHeaders,
+   };
+
+   return fetch('/person/' + id, options)
    .then(response => response.json())
    .then(result => console.log(result))
    .catch(error => console.log('error', error));
@@ -40,15 +49,7 @@ function* get(options){
 
 function* getPersonSaga(action){
 
- var myHeaders = new Headers();
- myHeaders.append("Authorization", localStorage.getItem("token") );
- myHeaders.append("Content-Type", "application/json");
-
- var options = {
-   method: "GET",
-   headers: myHeaders,
- };
- const data = yield call(get, options);
+ const data = yield call(get, action.payload);
 
   yield put({
               type: FIND_PERSON_SUCCESS,
@@ -74,7 +75,6 @@ function* update(options){
 
 function* updatePersonSaga(action){ 
 
-
  const data = yield call(update, action.payload);
 
   yield put({
@@ -94,7 +94,7 @@ function* deleteP(id){
      headers: myHeaders,
    };
 
-   return fetch('/person'+id, options)
+   return fetch('/person/'+id, options)
    .then(response => response.json())
    .then(result => console.log(result))
    .catch(error => console.log('error', error));
@@ -110,10 +110,35 @@ function* deletePersonSaga(action){
            });
 }
 
+function* allPersonSaga(){
+
+   var myHeaders = new Headers();
+   myHeaders.append("Authorization", localStorage.getItem("token") );
+   myHeaders.append("Content-Type", "application/json");
+  
+   var options = {
+     method: "GET",
+     headers: myHeaders,
+   };
+ //const data = yield  call(all, options);
+ const data = yield fetch('/person',options)
+ .then(response => response.json())
+ .then(r => r)
+ .catch(error => console.log('error', error));
+ 
+ yield console.log("data " ,data);
+
+  yield put({
+              type: ALL_PERSON_SUCCESS,
+              payload: data
+           });
+}
+
 export default function* personSaga(){    
    yield takeEvery(ADD_PERSON_REQUEST, addPersonSaga);
    yield takeEvery(UPDATE_PERSON_REQUEST, updatePersonSaga);
    yield takeEvery(DELETE_PERSON_REQUEST, deletePersonSaga );
    yield takeEvery(FIND_PERSON_REQUEST, getPersonSaga);
+   yield takeEvery(ALL_PERSON_REQUEST, allPersonSaga);
 
 }

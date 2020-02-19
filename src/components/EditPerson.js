@@ -1,6 +1,6 @@
 import React, { Component } from 'react';  
 import { Button, Card, CardBody, Col, Container, Input, Row, FormGroup } from 'reactstrap';  
-import { updatePerson } from "../redux/actionCreator/personActions";
+import { updatePerson, allPerson } from "../redux/actionCreator/personActions";
 import { connect } from 'react-redux';
 
 class EditPerson extends Component {  
@@ -48,19 +48,20 @@ class EditPerson extends Component {
 
   register() {  
   console.log(this.state.name);
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", localStorage.getItem("token"));
-    myHeaders.append("Content-Type", "application/json");
+  this.props.allPerson();
+  //   var myHeaders = new Headers();
+  //   myHeaders.append("Authorization", localStorage.getItem("token"));
+  //   myHeaders.append("Content-Type", "application/json");
 
-    var options = {
-      method: "GET",
-      headers: myHeaders
-    };
+  //   var options = {
+  //     method: "GET",
+  //     headers: myHeaders
+  //   };
 
-  fetch('/personbyname/' + this.state.name, options)
-    .then((response) => response.json())  
-    .then((json) => this.setState({person: json, loading: false}) )
-    .catch(error => console.log(error));
+  // fetch('/personbyname/' + this.state.name, options)
+  //   .then((response) => response.json())  
+  //   .then((json) => this.setState({person: json, loading: false}) )
+  //   .catch(error => console.log(error));
 }  
   
   register2() {  
@@ -83,7 +84,7 @@ class EditPerson extends Component {
     //   .then((json) => {console.log(json)} ) ;
 
 
-    this.props.editPerson(JSON.stringify(person));
+    this.props.editPerson(JSON.stringify(data));
   }
   
   enable(){
@@ -173,7 +174,8 @@ class EditPerson extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    edit: person => dispatch(updatePerson(person))
+    edit: person => dispatch(updatePerson(person)),
+    allPerson: () => dispatch(allPerson())
   }
 }
   

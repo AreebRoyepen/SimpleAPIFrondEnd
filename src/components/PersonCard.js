@@ -1,42 +1,49 @@
 import React, {Component} from 'react';
-import { Card, CardHeader, CardBody, CardFooter } from 'react-simple-card';
+import { connect } from "react-redux";
+import {Card,  CardBody, CardHeader, CardFooter} from 'reactstrap';  
+import { allPerson } from "../redux/actionCreator/personActions";
+import {personCard, isLoadingCard} from "../redux/reducers/personReducer";
 
 
 class PersonCard extends Component {
+
+  constructor(props) {
+    super(props);
+    // this.shouldComponentRender = this.shouldComponentRender.bind(this);
+  }
   
-  state = {
-    person: [],
-    isLoading: false
-  };
+  // state = {
+  //   person: [],
+  //   isLoading: false
+  // };
 
   componentDidMount(){
 
-    this.setState({isLoading: true});
+    // var myHeaders = new Headers();
+    // myHeaders.append("Authorization", localStorage.getItem("token") );
+    // myHeaders.append("Content-Type", "application/json");
 
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", localStorage.getItem("token") );
-    myHeaders.append("Content-Type", "application/json");
+    // var options = {
+    //   method: "GET",
+    //   headers: myHeaders
+    // };
 
-    var options = {
-      method: "GET",
-      headers: myHeaders
-    };
-
-    fetch("/person", options)
-      .then(response => response.json())
-      .then(json => {
-        this.setState({ person: json, isLoading: false });
-      }).catch(error => console.log('error', error));
-
+    // fetch("/person", options)
+    //   .then(response => response.json())
+    //   .then(json => {
+    //     this.setState({ person: json, isLoading: false });
+    //   }).catch(error => console.log('error', error));
+      
+      this.props.allPerson();
   }
 
 
   
   render (){
 
-    const{isLoading,person} = this.state;
+    const {persons} = this.props;
 
-    if(isLoading){
+    if(this.props.isLoading){
       return (
           <div>
               Loading...
@@ -47,12 +54,12 @@ class PersonCard extends Component {
           
               
             <div>
-              {  person.map( item => (
+              {  persons.map( item => (
                 
                 <Card>
-              <CardHeader >{item.name}, {item.surname}</CardHeader>
-              <CardBody >I am {item.gender}</CardBody>
-              <CardFooter >{item.email}</CardFooter> 
+              <CardHeader>{item.name}, {item.surname}</CardHeader>
+              <CardBody>I am {item.gender}</CardBody>
+              <CardFooter>{item.email}</CardFooter> 
               </Card>
             ))
             }
@@ -63,5 +70,20 @@ class PersonCard extends Component {
     }
   }
 }
+const mapStateToProps = state => {
+  console.log(state.person.persons);
+  
+  return {
+    persons: state.person.persons,
+    isLoading: state.isLoading
+  }
+}
 
-export default PersonCard;
+const mapDispatchToProps = dispatch => {
+  return {
+    person: person => dispatch(personCard(person)),
+    allPerson: () => dispatch(allPerson())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PersonCard);

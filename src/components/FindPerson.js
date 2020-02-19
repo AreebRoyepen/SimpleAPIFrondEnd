@@ -1,6 +1,8 @@
 import React, { Component } from 'react'; 
-import {  Card,  CardBody, Col, Container, Input, Row, FormGroup } from 'reactstrap';  
-  
+import { connect } from "react-redux";
+import { Button, Card,  CardBody,  Col, Container,  Input, Row, FormGroup } from 'reactstrap';  
+import { findPerson } from "../redux/actionCreator/personActions";
+
 class FindPerson extends Component {  
 
   state = {  
@@ -23,10 +25,12 @@ class FindPerson extends Component {
   register() {  
   
       console.log(this.state.name);
-    fetch('http://localhost:8080/personbyname/' + this.state.name)
-      .then((response) => response.json())  
-      .then((json) => this.setState({person: json, loading: false} , console.log(json)) )
-      .catch(error => console.log(error));
+    // fetch('http://localhost:8080/personbyname/' + this.state.name)
+    //   .then((response) => response.json())  
+    //   .then((json) => this.setState({person: json, loading: false} , console.log(json)) )
+    //   .catch(error => console.log(error));
+
+    this.props.findPerson(this.state.name);
   }  
 
 
@@ -94,5 +98,11 @@ class FindPerson extends Component {
     );  
   }  
 }  
+
+const mapDispatchToProps = dispatch => {
+  return {
+    findPerson : person => dispatch(findPerson(person))
+  }
+}
   
-export default FindPerson; 
+export default connect(null,mapDispatchToProps)(FindPerson); 

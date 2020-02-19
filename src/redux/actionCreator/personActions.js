@@ -1,4 +1,5 @@
-import { ADD_PERSON_REQUEST, UPDATE_PERSON_REQUEST, FIND_PERSON_REQUEST, DELETE_PERSON_REQUEST } from "../constants";
+import { ADD_PERSON_REQUEST, UPDATE_PERSON_REQUEST, FIND_PERSON_REQUEST, 
+    DELETE_PERSON_REQUEST, ALL_PERSON_REQUEST } from "../constants";
 
 export const addPerson = (person) => {
     
@@ -37,5 +38,14 @@ export const deletePerson = (person) => {
     return{
         type: DELETE_PERSON_REQUEST,
         payload: person
+    }
+};
+
+export const allPerson = () => {
+    
+    console.log("in action");
+    
+    return{
+        type: ALL_PERSON_REQUEST,
     }
 };

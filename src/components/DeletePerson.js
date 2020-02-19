@@ -60,7 +60,7 @@ class DeletePerson extends Component {
 const mapDispatchToProps = dispatch => {
 
   return {
-    deletePerson : person => dispatch(deletePerson)
+    deletePerson : person => dispatch(deletePerson(person))
   }
 
 }
