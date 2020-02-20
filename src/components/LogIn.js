@@ -1,16 +1,14 @@
 import React, { Component } from 'react';  
 import { connect } from "react-redux";
 import { Button, Card,  CardBody,  Col, Container,  Input, Row, FormGroup } from 'reactstrap';  
+import { login } from '../redux/actionCreator/personActions';
   
 class LogIn extends Component {  
 
   state = {  
-    name: '',
-    surname: '',
-    email: '',  
-    gender: '',
-    error: null,
-    isLoaded: false,
+    username: '',
+    password: '',
+
   }  
   constructor() {  
     super();  
@@ -28,39 +26,11 @@ class LogIn extends Component {
   
   register(event) {  
     const person = {
-      name: this.state.name,
-      surname: this.state.surname,
-      email: this.state.email,
-      gender: this.state.gender
+      username: this.state.username,
+      password: this.state.password
     }
 
-    // var formData = new FormData();
-    // formData.append('name', this.state.name);    
-    // formData.append('surname', this.state.surname);
-    // formData.append('email', this.state.email);
-    // formData.append('gender', this.state.gender);
-
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    
-    var raw = JSON.stringify({"username":"admin","password":"admin"});
-    
-    var options = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch('/authenticate', options)
-     .then(response => response.json())
-     .then((result)  => 
-      {localStorage.setItem('token', "Bearer " + result.token);
-       console.log(localStorage.getItem("token"))
-     })
-     .catch(error => console.log('error', error));
-
-    //this.props.addPerson(formData);
+    this.props.login(JSON.stringify(person));
 
   }  
 
@@ -69,7 +39,7 @@ class LogIn extends Component {
     return (  
       <div className="app flex-row align-items-center">  
 
-      Add mee
+      Log In
         <Container>  
           <Row className="justify-content-center">  
             <Col md="9" lg="7" xl="6">  
@@ -93,11 +63,10 @@ class LogIn extends Component {
   }  
 }  
 
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     addPerson: person => dispatch(addPerson(person))
-//   }
-// }
+const mapDispatchToProps = dispatch => {
+  return {
+    login: person => dispatch(login(person))
+  }
+}
   
-//export default connect(null, mapDispatchToProps)(LogIn); 
-export default LogIn;
+export default connect(null, mapDispatchToProps)(LogIn); 

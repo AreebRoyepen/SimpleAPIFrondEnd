@@ -11,18 +11,23 @@ import { ADD_PERSON_REQUEST, ADD_PERSON_SUCCESS,
     FIND_PERSON_BY_NAME_SUCCESS,
     FIND_PERSON_SCREEN,
     FIND_PERSON_BY_NAME_REQUEST_EDIT,
-    FIND_PERSON_BY_NAME_SUCCESS_EDIT} from "../constants";
+    FIND_PERSON_BY_NAME_SUCCESS_EDIT,
+    LOGIN_REQUEST,
+    LOGIN_SUCCESS} from "../constants";
+import { act } from "react-dom/test-utils";
 
 
 const initialState = {
     person: {},
+    login: {},
     persons: [],
     personCard: {},
     isLoadingCard: false,
     isLoadingFind: false,
     isLoadingEdit: false,
     edit: false,
-    id: null
+    id: null,
+    idForEdit: null
 };
 
 function personReducer(state = initialState, action){
@@ -42,7 +47,10 @@ function personReducer(state = initialState, action){
             });
 
         case UPDATE_PERSON_REQUEST:
+
+        console.log(action.payload)
             return Object.assign({}, state, {
+                
                 person: action.payload
             });
         case UPDATE_PERSON_SUCCESS:
@@ -96,12 +104,22 @@ function personReducer(state = initialState, action){
         case FIND_PERSON_BY_NAME_REQUEST_EDIT:
             return Object.assign({}, state, {
                 person: action.payload,
-                isLoadingEdit: true
+                isLoadingEdit: false
             });
         case FIND_PERSON_BY_NAME_SUCCESS_EDIT:
             return Object.assign({}, state, {
                 person: action.payload,
-                isLoadingEdit: false
+                isLoadingEdit: true,
+                idForEdit: action.payload[0].id
+
+        });
+        case LOGIN_REQUEST:
+            return Object.assign({}, state, {
+                login: action.payload,
+            });
+        case LOGIN_SUCCESS:
+            return Object.assign({}, state, {
+                login: action.payload,
             });
         default:
             return state;

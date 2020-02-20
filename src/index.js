@@ -5,7 +5,6 @@ import { Provider } from "react-redux";
 import {createBrowserHistory} from 'history';
 
 import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
 import PersonCard from './components/PersonCard';
 import DeletePerson from './components/DeletePerson';

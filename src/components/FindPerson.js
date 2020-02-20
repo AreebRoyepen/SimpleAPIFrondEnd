@@ -21,11 +21,6 @@ class FindPerson extends Component {
   register() {  
   
       console.log(this.state.name);
-    // fetch('http://localhost:8080/personbyname/' + this.state.name)
-    //   .then((response) => response.json())  
-    //   .then((json) => this.setState({person: json, loading: false} , console.log(json)) )
-    //   .catch(error => console.log(error));
-
     this.props.findPerson(this.state.name);
   }  
 
@@ -45,8 +40,8 @@ class FindPerson extends Component {
 
     return (  
       <div className="app flex-row align-items-center">  
-          <div class="row" className="mb-2 pageheading">  
-            <div class="col-sm-12 btn btn-primary">  
+          <div className="row">  
+            <div className="col-sm-12 btn btn-primary">  
             Find meee
             </div>  
           </div>  
@@ -56,7 +51,7 @@ class FindPerson extends Component {
           
           <div>        
           <input type="text" onChange = {this.handleChange} name="name" placeholder=" name" />
-          <button onClick = {() => this.register()}> Search</button>
+          <Button onClick = {() => this.register()}> Search</Button>
           </div>
 
           :

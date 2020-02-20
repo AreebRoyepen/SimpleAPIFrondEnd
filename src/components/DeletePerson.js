@@ -5,49 +5,37 @@ import { deletePerson } from "../redux/actionCreator/personActions";
 class DeletePerson extends Component {  
 
   state = {  
-    id: '',  
-    person: {},
-    loading: true
-  }  
+    id: ''  
+    }  
   constructor() {  
     super();  
 
-    this.id = this.name.bind(this);  
     this.register = this.register.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }  
-  
-  name(event) {  
-    this.setState({ id: event.target.value })  
-  }  
-  
+
   register() {  
-  
-      console.log(this.state.id);
-    // fetch('http://localhost:8080/person/' + this.state.id, {method : "DELETE"})
-    //   .then((response) => response.json())  
-    //   .then((json) => this.setState({person: json, loading: false} , console.log(json)) )
-    //   .catch(error => console.log(error));
-
-      this.props.deletePerson(this.state.id);
+    this.props.deletePerson(this.state.id);
   }  
 
 
 
-  handleChange(event){
-    this.setState({id: event.target.value});
+  handleChange = (e) =>{
+    this.setState({      
+              [e.target.name]: e.target.value
+        });
   }
   
   render() {    
 
     return (  
       <div className="app flex-row align-items-center">  
-          <div class="row" className="mb-2 pageheading">  
-            <div class="col-sm-12 btn btn-primary">  
+          <div className="row" >  
+            <div className="col-sm-12 btn btn-primary">  
             Delete meee
             </div>  
  
-          <input type="text" value={this.state.id} onChange={this.handleChange} />
+          <input type="text" name = 'id' onChange={this.handleChange} />
           <button onClick = {() => this.register()}> Delete By ID</button>
 
           </div>

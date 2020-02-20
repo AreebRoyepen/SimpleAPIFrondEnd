@@ -12,18 +12,12 @@ class EditPerson extends Component {
         gender: '',
         id: '',
         person: [], 
-        error: null,
-        loading: true,
         edit : false
     }
 
   constructor() {  
     super();  
-     
-    this.email = this.email.bind(this);  
-    this.gender = this.gender.bind(this);  
-    this.name = this.name.bind(this);  
-    this.surname = this.surname.bind(this);  
+ 
 
     this.register = this.register.bind(this);
     this.register2 = this.register2.bind(this);
@@ -31,40 +25,14 @@ class EditPerson extends Component {
     this.handleChange = this.handleChange.bind(this);
   }  
   
-  
-  
-  email(event) {  
-    this.setState({ email: event.target.value })  
-  }  
-  gender(event) {  
-    this.setState({ gender: event.target.value })  
-  }  
-  surname(event) {  
-    this.setState({ surname: event.target.value })  
-  }  
-  name(event) {  
-    this.setState({ name: event.target.value })  
-  }  
-
   register() {  
   console.log(this.state.name);
   this.props.findPerson(this.state.name);
-  //   var myHeaders = new Headers();
-  //   myHeaders.append("Authorization", localStorage.getItem("token"));
-  //   myHeaders.append("Content-Type", "application/json");
-
-  //   var options = {
-  //     method: "GET",
-  //     headers: myHeaders
-  //   };
-
-  // fetch('/personbyname/' + this.state.name, options)
-  //   .then((response) => response.json())  
-  //   .then((json) => this.setState({person: json, loading: false}) )
-  //   .catch(error => console.log(error));
 }  
   
   register2() {  
+
+    const {id} = this.props;
 
     var data = {};
 
@@ -77,32 +45,36 @@ class EditPerson extends Component {
     if(this.state.email != "")
       data["email"] =this.state.email;
 
-    console.log(JSON.stringify(data));
-  
-    // fetch('http://localhost:8080/person/' + this.state.person[0].id, {method : "PUT" , body : formData})
-    //   .then((response) => response.json())  
-    //   .then((json) => {console.log(json)} ) ;
+    var data2 = {}
+
+    data2["data"] = data;
+    data2["id"] = id;
 
 
-    this.props.editPerson(JSON.stringify(data));
+    this.props.editPerson(data2);
   }
   
   enable(){
       this.setState({edit: true, loading : false});
   }
 
-  handleChange(event){
-    this.setState({name: event.target.value});
+  handleChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
   }
 
   render() {    
+
+    const {person, loading} = this.props;
+    
     return (  
 
         <div>
     
-        {this.state.loading ?
+        {loading == false ?
         <div>          
-            <input type="text" value={this.state.name} onChange={this.handleChange} />
+            <input type="text" name="name" onChange={this.handleChange} />
             <button onClick = {() => this.register()}> Search</button>
         </div>
         :
@@ -110,20 +82,30 @@ class EditPerson extends Component {
         <div>
 
 {this.state.edit ?
+
+
             <Container>  
             <Row className="justify-content-center">  
               <Col md="9" lg="7" xl="6">  
                 <Card className="mx-4">  
                   <CardBody className="p-4">  
-                      <FormGroup disabled className="mb-3">  
-  
-                        <Input type="text"  value={this.state.name} onChange = { this.name} placeholder= {this.state.person[0].name} />  
-                        <Input type="text"  value={this.state.surname} onChange = { this.surname} placeholder= {this.state.person[0].surname} />  
-                        <Input type="text"  value={this.state.email} onChange = { this.email} placeholder= {this.state.person[0].email}/>  
-                        <Input type="text"  value={this.state.gender} onChange = { this.gender} placeholder= {this.state.person[0].gender} />  
-                        <Button onClick = {() => this.register2()}> Submit</Button>
-  
-                    </FormGroup>  
+                      
+                      {
+
+                        person.map( item =>(
+
+                          <FormGroup disabled className="mb-3">  
+                            
+                            <Input type="text"  name="name" onChange = { this.handleChange} placeholder= {item.name} />  
+                            <Input type="text"  name="surname" onChange = { this.handleChange} placeholder= {item.surname} />  
+                            <Input type="text"  name= "email" onChange = { this.handleChange} placeholder= {item.email}/>  
+                            <Input type="text"  name="gender" onChange = { this.handleChange} placeholder= {item.gender} />  
+                            <Button onClick = {() => this.register2()}> Submit</Button>
+
+                          </FormGroup>  
+
+                        ))
+                      }
                   </CardBody>  
                 </Card>  
               </Col>  
@@ -138,15 +120,20 @@ class EditPerson extends Component {
             <Col md="9" lg="7" xl="6">  
               <Card className="mx-4">  
                 <CardBody className="p-4">  
-                    <FormGroup disabled className="mb-3">  
+                    {
+                      person.map(item => (
 
-                      <Input type="text"  value={this.state.person[0].name} onChange = { this.name} placeholder=" name" />  
-                      <Input type="text"  value={this.state.person[0].surname} onChange = { this.surname} placeholder=" surname" />  
-                      <Input type="text"  value={this.state.person[0].email} onChange = { this.email} placeholder=" Email" />  
-                      <Input type="text"  value={this.state.person[0].gender} onChange = { this.gender} placeholder=" gender" />  
+                      <FormGroup disabled className="mb-3">  
+
+                      <Input type="text"  value={item.name} onChange = { this.name} placeholder=" name" />  
+                      <Input type="text"  value={item.surname} onChange = { this.surname} placeholder=" surname" />  
+                      <Input type="text"  value={item.email} onChange = { this.email} placeholder=" Email" />  
+                      <Input type="text"  value={item.gender} onChange = { this.gender} placeholder=" gender" />  
                       <Button onClick = {() => this.enable()}> Edit </Button>
+                      </FormGroup>
+                      ))}
 
-                  </FormGroup>  
+                   
                 </CardBody>  
               </Card>  
             </Col>  
@@ -171,21 +158,20 @@ class EditPerson extends Component {
 }  
   
 const mapStateToProps = state => {
-  console.log(state.person.persons);
+  console.log(state.person.person);
   
   return {
-    person: state.person.persons,
+    person: state.person.person,
     loading: state.person.isLoadingEdit,
-    edit: state.person.edit
+    id: state.person.idForEdit
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    edit: person => dispatch(updatePerson(person)),
+    editPerson: person => dispatch(updatePerson(person)),
     findPerson: person => dispatch(findPersonByNameEdit(person))
   }
 }
   
 export default connect(mapStateToProps, mapDispatchToProps)(EditPerson);
-//export default EditPerson; 

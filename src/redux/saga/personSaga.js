@@ -1,8 +1,40 @@
-import { put, takeEvery,take, call } from "redux-saga/effects";
+import { put, takeEvery, call } from "redux-saga/effects";
 import { ADD_PERSON_REQUEST, ADD_PERSON_SUCCESS, UPDATE_PERSON_SUCCESS, 
    FIND_PERSON_SUCCESS, DELETE_PERSON_SUCCESS, UPDATE_PERSON_REQUEST, 
    DELETE_PERSON_REQUEST, FIND_PERSON_REQUEST, ALL_PERSON_REQUEST, 
-   ALL_PERSON_SUCCESS,FIND_PERSON_BY_NAME_REQUEST, FIND_PERSON_BY_NAME_SUCCESS } from "../constants";
+   ALL_PERSON_SUCCESS,FIND_PERSON_BY_NAME_REQUEST, FIND_PERSON_BY_NAME_SUCCESS, 
+   LOGIN_REQUEST, LOGIN_SUCCESS,
+   FIND_PERSON_BY_NAME_REQUEST_EDIT,
+   FIND_PERSON_BY_NAME_SUCCESS_EDIT } from "../constants";
+
+function* login(action){
+
+   var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    
+    var options = {
+      method: 'POST',
+      headers: myHeaders,
+      body: action.payload,
+    };
+
+    const data = yield fetch('/authenticate', options)
+     .then(response => response.json())
+     .then((result)  => 
+      {
+         localStorage.setItem('token', "Bearer " + result.token);
+       console.log(localStorage.getItem("token"))
+     })
+     .catch(error => console.log('error', error));
+
+   yield put({
+      type: LOGIN_SUCCESS,
+      payload: data
+   });
+
+
+}
 
 function* add(options){
 
@@ -58,29 +90,33 @@ function* getPersonSaga(action){
            });
 }
 
-function* update(options){
+function update(options){
 
    var myHeaders = new Headers();
    myHeaders.append("Authorization", localStorage.getItem("token") );
    myHeaders.append("Content-Type", "application/json");
 
-   console.log(options);
+   console.log(options.data);
 
 
 
-   return fetch('/person', {method: "PUT", headers: myHeaders,  })
+   return fetch('/person/'+options.id, {method: "PUT", headers: myHeaders, body: JSON.stringify(options.data)})
    .then(response => response.json())
-   .then(result => console.log(result))
+   .then(result => result)
    .catch(error => console.log('error', error));
 }
 
 function* updatePersonSaga(action){ 
 
+   console.log(action.payload);
+
  const data = yield call(update, action.payload);
+
+ console.log(data);
 
   yield put({
               type: UPDATE_PERSON_SUCCESS,
-              data
+              payload: data
            });
 }
 
@@ -135,9 +171,7 @@ function* allPersonSaga(){
            });
 }
 
-
-function* findPersonByNameSaga(action){
-
+function findPersonByName (name){
    var myHeaders = new Headers();
    myHeaders.append("Authorization", localStorage.getItem("token") );
    myHeaders.append("Content-Type", "application/json");
@@ -147,18 +181,31 @@ function* findPersonByNameSaga(action){
      headers: myHeaders,
    };
 
-   const data = yield fetch('/personbyname/' + action.payload, options)
+   return fetch('/personbyname/' + name, options)
    .then(response => response.json())
    .then(result => result)
    .catch(error => console.log('error', error));
+}
 
-   // const data = yield call(findByName, action.payload);   
+function* findPersonByNameSaga(action){
+
+   const data = yield call(findPersonByName, action.payload);   
 
    yield put({
       type: FIND_PERSON_BY_NAME_SUCCESS,
       payload: data
    });
 
+}
+
+function* findPersonByNameEditSaga(action){
+
+   const data = yield call(findPersonByName, action.payload);   
+
+   yield put({
+      type: FIND_PERSON_BY_NAME_SUCCESS_EDIT,
+      payload: data
+   });
 
 }
 
@@ -169,5 +216,9 @@ export default function* personSaga(){
    yield takeEvery(FIND_PERSON_REQUEST, getPersonSaga);
    yield takeEvery(ALL_PERSON_REQUEST, allPersonSaga);
    yield takeEvery(FIND_PERSON_BY_NAME_REQUEST, findPersonByNameSaga);
+   yield takeEvery(LOGIN_REQUEST, login);
+   yield takeEvery(FIND_PERSON_BY_NAME_REQUEST_EDIT, findPersonByNameEditSaga);
+
+   
 
 }
